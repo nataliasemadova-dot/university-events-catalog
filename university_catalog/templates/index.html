@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог мероприятий Университета</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 0 20px; }
+        .filter-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-group select, .filter-group input { padding: 8px; }
+        .event { border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; border-radius: 8px; background: #f9f9f9; }
+        .form-box { border: 1px solid #eee; padding: 20px; margin-top: 30px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <h1>🎓 Расписание мероприятий</h1>
+
+    <!-- Блок фильтров -->
+    <div class="filter-group">
+        <form method="get" style="display: contents;">
+            <input type="date" name="date" value="{{ selected_date }}">
+            <select name="topic">
+                <option value="">Любая тема</option>
+                {% for t in topics %}
+                    <option value="{{ t }}" {% if t == selected_topic %}selected{% endif %}>{{ t }}</option>
+                {% endfor %}
+            </select>
+            <select name="format">
+                <option value="">Любой формат</option>
+                {% for f in formats %}
+                    <option value="{{ f }}" {% if f == selected_format %}selected{% endif %}>{{ f }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Фильтровать</button>
+            <a href="/"><button type="button">Сбросить</button></a>
+        </form>
+    </div>
+
+    <!-- Список найденных мероприятий -->
+    {% for event in events %}
+        <div class="event">
+            <h3>{{ event.title }}</h3>
+            <p><strong>Дата:</strong> {{ event.date }}</p>
+            <p><strong>Тема:</strong> {{ event.topic }}</p>
+            <p><strong>Формат:</strong> {{ event.format }} ({{ event.location }})</p>
+        </div>
+    {% else %}
+        <p>Мероприятий по таким фильтрам не найдено.</p>
+    {% endfor %}
+
+    <!-- Форма добавления новой наклейки -->
+    <div class="form-box">
+        <h3>➕ Добавить новое мероприятие</h3>
+        <form method="post" action="/add">
+            <input type="text" name="title" placeholder="Название" required>
+            <input type="date" name="date" required>
+            <input type="text" name="topic" placeholder="Тема" required>
+            <input type="text" name="format" placeholder="Формат (Онлайн/Офлайн)" required>
+            <input type="text" name="location" placeholder="Место">
+            <button type="submit">Добавить</button>
+        </form>
+    </div>
+</body>
+</html>
